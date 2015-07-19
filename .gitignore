@@ -1,2 +1,5 @@
 /vendor/
 /.bundle/
+/output.tsv
+/output.txt
+/url.txt

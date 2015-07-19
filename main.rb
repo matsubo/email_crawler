@@ -4,20 +4,17 @@ require 'uri'
 require 'logger'
 require 'open-uri'
 
-if ARGV.empty?
-  puts 'Pass file name in the 1st parameter.'
-  exit
-end
 
-
-file = ARGV[0]
+file = ARGV[0] ||= 'url.txt'
 
 urls = File.open(file).read.split("\n")
 
 
+# hash for result
 result = {}
 
 
+# email regex
 r = Regexp.new(/\b[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b/)     
 
 
@@ -62,7 +59,12 @@ Cosmicrawler.http_crawl(urls, 16) {|request|
 
       logger.info(url)
 
-      response = open(url, { read_timeout: 5 }).read
+      begin
+        response = open(url, { read_timeout: 5 }).read
+      rescue => e
+        logger.error(e)
+        next
+      end
 
       emails = response.scan(r).uniq
       result[uri].concat(emails)
@@ -70,7 +72,6 @@ Cosmicrawler.http_crawl(urls, 16) {|request|
       logger.debug(emails)
 
     end
-
 
   rescue => e
     logger.error(e)
