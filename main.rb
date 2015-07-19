@@ -62,7 +62,7 @@ Cosmicrawler.http_crawl(urls, 16) {|request|
 
       logger.info(url)
 
-      response = open(url).read
+      response = open(url, { read_timeout: 5 }).read
 
       emails = response.scan(r).uniq
       result[uri].concat(emails)
